@@ -1,0 +1,162 @@
+{namespace JIRA.Templates.CVS}
+
+/**
+ * CVS Fields - shared by add repository and update repository
+ * @param fetchLog
+ * @param name
+ * @param description
+ * @param cvsRoot
+ * @param moduleName
+ * @param logFilePath
+ * @param timeout
+ * @param repositoryBrowserURL
+ * @param repositoryBrowserRootParam
+ * @param errors
+ */
+{template .cvsFields}
+<script language="JavaScript">
+    function processSelection(value)
+    {lb}
+        document.forms['jiraform'].elements['password'].disabled = value;
+    {rb}
+</script>
+
+{call aui.form.textField}
+    {param id: 'name' /}
+    {param labelContent}
+        {getText('common.words.name')}
+    {/param}
+    {param size: 30 /}
+    {param isRequired: true /}
+    {param descriptionText}
+        {getText('admin.cvsmodules.name.description')}
+    {/param}
+    {param value: $name /}
+    {param errorTexts: $errors.name ? [$errors.name] : [] /}
+{/call}
+
+{call aui.form.textField}
+    {param id: 'description' /}
+    {param labelContent}
+        {getText('common.words.description')}
+    {/param}
+    {param size: 60 /}
+    {param value: $description /}
+    {param errorTexts: $errors.description ? [$errors.description] : [] /}
+{/call}
+
+<h3>{getText('admin.cvsmodules.cvs.module.details')}</h3>
+
+{call aui.form.textField}
+    {param id: 'cvsRoot' /}
+    {param labelContent}
+        {getText('admin.cvsmodules.cvs.root')}
+    {/param}
+    {param size: 60 /}
+    {param isRequired: true /}
+    {param descriptionText}
+        {getText('admin.cvsmodules.cvs.root.description')}
+    {/param}
+    {param value: $cvsRoot /}
+    {param errorTexts: $errors.cvsRoot ? [$errors.cvsRoot] : [] /}
+{/call}
+
+{call aui.form.textField}
+    {param id: 'moduleName' /}
+    {param labelContent}
+        {getText('admin.cvsmodules.module.name')}
+    {/param}
+    {param size: 60 /}
+    {param isRequired: true /}
+    {param descriptionText}
+        {getText('admin.cvsmodules.module.name.description')}
+    {/param}
+    {param value: $moduleName /}
+    {param errorTexts: $errors.moduleName ? [$errors.moduleName] : [] /}
+{/call}
+
+{call aui.form.fieldset}
+    {param legendContent}
+        {getText('admin.cvsmodules.log.retrieval')}<span class="aui-icon icon-required"></span>
+    {/param}
+    {param isGroup: true /}
+    {param content}
+        <div class="radio">
+            <input class="radio" id="fetchLogTrue" type="radio" value="true" name="fetchLog" onclick="processSelection(false);" {if $fetchLog}checked{/if}><label for="fetchLogTrue">{getText('admin.cvsmodules.automatically.retrieve.the.cvs.log')}</label>
+        </div>
+        <div class="radio">
+            <input class="radio" id="fetchLogFalse" type="radio" value="false" name="fetchLog" onclick="processSelection(true);" {if not $fetchLog}checked{/if}><label for="fetchLogFalse">{getText('admin.cvsmodules.update.log.manually')}</label>
+        </div>
+    {/param}
+{/call}
+
+{call aui.form.textField}
+    {param id: 'logFilePath' /}
+    {param labelContent}
+        {getText('admin.cvsmodules.log.file.path')}
+    {/param}
+    {param size: 60 /}
+    {param isRequired: true /}
+    {param descriptionText}
+        {getText('admin.cvsmodules.log.retrieval.description')}
+    {/param}
+    {param value: $logFilePath /}
+    {param errorTexts: $errors.logFilePath ? [$errors.logFilePath] : [] /}
+{/call}
+
+{call aui.form.textField}
+    {param id: 'timeout' /}
+    {param labelContent}
+        {getText('admin.cvsmodules.cvs.timeout')}
+    {/param}
+    {param size: 20 /}
+    {param isRequired: true /}
+    {param descriptionText}
+        {getText('admin.cvsmodules.cvs.timeout.description')}
+    {/param}
+    {param value: $timeout /}
+    {param errorTexts: $errors.timeout ? [$errors.timeout] : [] /}
+{/call}
+
+{call aui.form.passwordField}
+    {param id: 'password' /}
+    {param labelContent}
+        {getText('common.words.password')}
+    {/param}
+    {param isDisabled: $fetchLog != true /}
+    {param descriptionText}
+        {getText('admin.cvsmodules.password.description')}
+    {/param}
+    {param errorTexts: $errors.password ? [$errors.password] : [] /}
+{/call}
+
+<h3>{getText('admin.cvsmodules.viewcvs.details')}</h3>
+
+{call aui.form.textField}
+    {param id: 'repositoryBrowserURL' /}
+    {param labelContent}
+        {getText('admin.cvsmodules.base.url')}
+    {/param}
+    {param size: 60 /}
+    {param descriptionText}
+        {getText('admin.cvsmodules.base.url.description')}
+    {/param}
+
+    {param value: $repositoryBrowserURL /}
+    {param errorTexts: $errors.repositoryBrowserURL ? [$errors.repositoryBrowserURL] : [] /}
+{/call}
+
+{call aui.form.textField}
+    {param id: 'repositoryBrowserRootParam' /}
+    {param labelContent}
+        {getText('admin.cvsmodules.root.parameter')}
+    {/param}
+    {param size: 30 /}
+    {param descriptionText}
+        {getText('admin.cvsmodules.root.parameter.description')}
+    {/param}
+    {param value: $repositoryBrowserRootParam /}
+    {param errorTexts: $errors.repositoryBrowserRootParam ? [$errors.repositoryBrowserRootParam] : [] /}
+{/call}
+
+{/template}

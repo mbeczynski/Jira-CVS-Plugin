@@ -1,0 +1,102 @@
+<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <param name="plugin-icon">images/pluginIcon.png</param>
+        <param name="plugin-logo">images/pluginLogo.png</param>
+    </plugin-info>
+
+    <resource type="i18n" name="i18n" location="jira-cvs-plugin"/>
+
+    <web-resource key="soy-templates">
+        <dependency>com.atlassian.soy.soy-template-plugin:soy-deps</dependency>
+        <dependency>com.atlassian.auiplugin:aui-experimental-soy-templates</dependency>
+        <dependency>jira.webresources:jira-global</dependency> <!-- JIRA global for messages.soy -->
+        <resource type="soy" name="repositoryTestSoy" location="templates/plugins/jira/vcs/repositorytest.soy"/>
+        <resource type="soy" name="selectProjectRepositorySoy" location="templates/plugins/jira/vcs/selectprojectrepository.soy"/>
+        <resource type="soy" name="deleteRepositorySoy" location="templates/plugins/jira/vcs/repositorydelete.soy"/>
+        <resource type="soy" name="viewRepositoriesSoy" location="templates/plugins/jira/vcs/repositoryview.soy"/>
+        <resource type="soy" name="addRepositorySoy" location="templates/plugins/jira/vcs/addrepository.soy"/>
+        <resource type="soy" name="updateRepositorySoy" location="templates/plugins/jira/vcs/updaterepository.soy"/>
+        <resource type="soy" name="cvsFieldsSoy" location="templates/plugins/jira/vcs/cvsfields.soy"/>
+    </web-resource>
+
+    <webwork1 key="cvs-webactions" class="java.lang.Object">
+        <actions>
+            <action name="com.atlassian.jira.action.admin.vcs.AddRepository" alias="AddRepository" roles-required="admin">
+                <view name="input" type="soy">:soy-templates/JIRA.Templates.CVS.addRepository</view>
+                <view name="error" type="soy">:soy-templates/JIRA.Templates.CVS.viewRepositories</view>
+                <command name="view" alias="ViewRepositories">
+                    <view name="success" type="soy">:soy-templates/JIRA.Templates.CVS.viewRepositories</view>
+                </command>
+            </action>
+
+            <action name="com.atlassian.jira.action.admin.vcs.UpdateRepository" alias="UpdateRepository" roles-required="sysadmin">
+                <view name="input" type="soy">:soy-templates/JIRA.Templates.CVS.updateRepository</view>
+                <view name="error" type="soy">:soy-templates/JIRA.Templates.CVS.viewRepositories</view>
+            </action>
+
+            <action name="com.atlassian.jira.action.admin.vcs.RepositoryTest" alias="RepositoryTest" roles-required="sysadmin">
+                <view name="success" type="soy">:soy-templates/JIRA.Templates.CVS.repotest</view>
+                <view name="error" type="soy">:soy-templates/JIRA.Templates.CVS.repotest</view>
+            </action>
+
+            <action name="com.atlassian.jira.action.admin.vcs.DeleteRepository" alias="DeleteRepository" roles-required="sysadmin">
+                <view name="input" type="soy">:soy-templates/JIRA.Templates.CVS.repoDelete</view>
+                <view name="error" type="soy">:soy-templates/JIRA.Templates.CVS.repoDelete</view>
+            </action>
+
+            <action name="com.atlassian.jira.action.admin.vcs.enterprise.EnterpriseSelectProjectRepository" alias="EnterpriseSelectProjectRepository" roles-required="sysadmin">
+                <view name="success" type="soy">:soy-templates/JIRA.Templates.CVS.selectProjectRepository</view>
+                <view name="input" type="soy">:soy-templates/JIRA.Templates.CVS.selectProjectRepository</view>
+            </action>
+        </actions>
+    </webwork1>
+
+    <issue-tabpanel key="cvs-tabpanel" i18n-name-key="admin.issue.tabpanels.plugin.cvs.name" name="CVS Tab Panel" class="com.atlassian.jira.issuetabpanels.cvs.CVSTabPanel">
+        <description key="admin.issue.tabpanels.plugin.cvs.desc">Display CVS commits</description>
+        <label key="viewissue.tabs.vcs">Version Control</label>
+        <resource type="velocity" name="view" location="templates/plugins/jira/issuetabpanels/cvscommit.vm" />
+        <order>40</order>
+        <sortable>true</sortable>
+        <supports-ajax-load>true</supports-ajax-load>
+    </issue-tabpanel>
+
+    <web-item key="cvs_modules" name="CVS Modules Link" section="admin_plugins_menu/source_control"
+              i18n-name-key="webfragments.admin.menu.item.cvs.modules.name" weight="10">
+        <label key="admin.menu.globalsettings.cvs.modules"/>
+        <link linkId="cvs_modules">/secure/admin/ViewRepositories.jspa</link>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.UserIsAdminCondition"/>
+        <param name="webfragments.keywords">webfragments.keywords.admin.plugins.cvs_modules</param>
+    </web-item>
+
+    <project-operation name="CVS Modules Project Operation" key="cvsProjectOperation"
+                       class="com.atlassian.jira.projectop.CvsProjectOperation">
+        <resource name="view" type="velocity" location="templates/plugins/jira/projectoperations/cvsprojectop.vm"/>
+        <param name="name" value="Operation for Admin"/>
+        <param name="permissions" value="admin"/>
+    </project-operation>
+
+<component key="cvsRepositoryUtil" name="CvsRepositoryUtil" class="com.atlassian.jira.vcs.cvsimpl.CvsRepositoryUtilImpl">
+        <interface>com.atlassian.jira.vcs.cvsimpl.CvsRepositoryUtil</interface>
+    </component>
+
+<component key="repositoryManager" name="RepositoryManager" class="com.atlassian.jira.vcs.DefaultRepositoryManager" public="true">
+        <interface>com.atlassian.jira.vcs.RepositoryManager</interface>
+        <interface>com.atlassian.sal.api.lifecycle.LifecycleAware</interface>
+    </component>
+
+<component-import key="permissionManager" interface="com.atlassian.jira.security.PermissionManager"/>
+    <component-import key="changeHistoryManager" interface="com.atlassian.jira.issue.changehistory.ChangeHistoryManager"/>
+    <component-import key="projectManager" interface="com.atlassian.jira.project.ProjectManager"/>
+    <component-import key="projectFactory" interface="com.atlassian.jira.project.ProjectFactory"/>
+    <component-import key="ofBizDelegator" interface="com.atlassian.jira.ofbiz.OfBizDelegator"/>
+    <component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher"/>
+
+<component-import key="pluginScheduler">
+        <description>SAL Scheduler</description>
+        <interface>com.atlassian.sal.api.scheduling.PluginScheduler</interface>
+    </component-import>
+    
+</atlassian-plugin>

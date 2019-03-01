@@ -1,0 +1,11 @@
+This is the JIRA CVS plugin.
+
+This plugin was created by extracting the existing ViewCVS support from JIRA.
+
+CVS support has been removed from JIRA core as of JIRA 6.1. People who previously
+used this feature can continue to do so through the use of this plugin, and data
+will continue to work under the new plugin. This plugin is unsupported, however.
+
+Those customers who wish to continue to use CVS within JIRA, whilst receiving
+Atlassian's legendary support, are encouraged to migrate to FishEye, or to
+migrate away from CVS and to a more recent version control system.

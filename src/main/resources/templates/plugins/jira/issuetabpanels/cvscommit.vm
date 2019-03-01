@@ -1,0 +1,89 @@
+#disable_html_escaping()
+###macro(changeType $revision)
+##    #if ($revision.isDead() == true)
+##        <font color="#990000" size="-2"><b>DEL</b></font>
+##    #elseif ($revision.isInitialRevision() == true)
+##        <font color="#009900" size="-2"><b>ADD</b></font>
+##    #elseif ($revision.isBeginOfLog() == true)
+##        <font color="#000099" size="-2"><b>STATCVS</b></font>
+##    #else
+##        <font color="#999933" size="-2"><b>MODIFY</b></font>
+##    #end
+###end
+
+<div class="actionContainer">
+    <div class="action-details">
+        #set ($usernameLink = $userformat.formatUser($cvsCommit.username, 'profileLinkActionHeader', 'cvscommit_header'))
+
+        #set ($respositoryName = $cvsCommit.repositoryName)
+        #set ($date = " - <font size=-2><font color=#336699>$dateFormatter.format($cvsCommit.timePerformed)</font></font>")
+        #set ($numFilesChanged = $cvsCommit.revisions.size())
+
+        #if ($cvsCommit.branchName.equals("HEAD"))
+            $i18n.getText('viewissue.comment.committedby.on.head', [$usernameLink, $numFilesChanged, $respositoryName, $date])
+        #else
+            $i18n.getText('viewissue.comment.committedby.on.branch', [$usernameLink, $numFilesChanged, $respositoryName, $date, $cvsCommit.branchName])
+        #end
+    </div>
+    <div class="action-body">
+        <table cellpadding="2" cellspacing="0" border="0" width="100%">
+            <tr>
+                <td bgcolor="#ffffff" width="1%" colspan="3">#makelinkedhtml ( $cvsCommit.comment )</td>
+            </tr>
+            <tr>
+
+            </tr>
+            #if (!$cvsCommit.revisions.empty)
+            <tr>
+                <td bgcolor="#ffffff" width="2%" valign="top" nowrap align="right"></td>
+                <td bgcolor="#ffffff" colspan="3" width="98%" align="left">
+                    <table cellpadding="2" cellspacing="0" border="0" width="1%" style="margin-top: 5px">
+                    #if ($cvsCommit.hasRepositoryViewer())
+                        #foreach ($revision in $cvsCommit.revisions)
+                            <tr >
+                                <td width="1%" nowrap>
+                                    #if ($revision.isDead() == true)
+                                        <font color="#990000" size="-2"><b>DEL</b></font>
+                                    #elseif ($revision.isInitialRevision() == true)
+                                        <font color="#009900" size="-2"><b>ADD</b></font>
+                                    #elseif ($revision.isBeginOfLog() == true)
+                                        <font color="#000099" size="-2"><b>STATCVS</b></font>
+                                    #else
+                                        <font color="#999933" size="-2"><b>MODIFY</b></font>
+                                    #end
+                                </td>
+                                <td width="1%" nowrap><a href="$cvsCommit.getFileLink($revision.file.filenameWithPath)" >$revision.file.filenameWithPath</a> </td>
+                                <td width="1%" nowrap>&nbsp;</td>
+                                <td width="1%" nowrap>Rev. <a href="$cvsCommit.getRevisionLink($revision.file.filenameWithPath, $revision.revision)">$revision.revision</a>&nbsp;</td>
+                                <td width="1%" nowrap>&nbsp;</td>
+                                <td width="1%" nowrap>(<span class="small"><a href="$cvsCommit.getDiffLink($revision.file.filenameWithPath, $revision.revision)">+$revision.linesAdded -$revision.linesRemoved lines</a></span>)</td>
+                            </tr>
+                        #end
+                    #else
+                        #foreach ($revision in $cvsCommit.revisions)
+                            <tr>
+                                <td width="1%" nowrap>
+                                    #if ($revision.isDead() == true)
+                                        <font color="#990000" size="-2"><b>DEL</b></font>
+                                    #elseif ($revision.isInitialRevision() == true)
+                                        <font color="#009900" size="-2"><b>ADD</b></font>
+                                    #elseif ($revision.isBeginOfLog() == true)
+                                        <font color="#000099" size="-2"><b>STATCVS</b></font>
+                                    #else
+                                        <font color="#999933" size="-2"><b>MODIFY</b></font>
+                                    #end
+                                <td width="1%" nowrap>$revision.file.filenameWithPath</td>
+                                <td width="1%" nowrap>&nbsp;</td>
+                                <td width="1%" nowrap>Rev. ${revision.revision}&nbsp;</td>
+                                <td width="1%" nowrap>&nbsp;</td>
+                                <td width="1%" nowrap>(<span class="small">+$revision.linesAdded -$revision.linesRemoved lines</span>)</td>
+                            </tr>
+                        #end
+                    #end
+                    </table>
+                </td>
+            </tr>
+            #end
+        </table>
+     </div>
+</div>

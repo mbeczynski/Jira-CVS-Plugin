@@ -1,0 +1,58 @@
+{namespace JIRA.Templates.CVS}
+
+/**
+ * Repository Delete Page.
+ * @param name
+ * @param id
+ * @param xsrfToken
+ */
+{template .repoDelete}
+<html>
+<head>
+	<title>{getText('admin.cvsmodules.delete.version.control.module')}</title>
+    <meta name="admin.active.section" content="admin_plugins_menu/source_control"/>
+    <meta name="admin.active.tab" content="cvs_modules"/>
+</head>
+
+<body>
+    <h3>{getText('admin.cvsmodules.delete.version.control.module')}</h3>
+    {call JIRA.Templates.warningMsg}
+        {param msg}
+            {getText('admin.cvsmodules.delete.confirmation', $name)}
+        {/param}
+    {/call}
+
+    {call aui.form.form}
+        {param action: 'DeleteRepository.jspa' /}
+        {param content}
+            <input type="hidden" name="id" id="id" value="{$id}">
+            <input type="hidden" name="confirmed" id="confirmed" value="true">
+            <input type="hidden" name="atl_token" id="ital_toekn" value="{$xsrfToken}">
+
+            {call aui.form.buttons}
+                {param content}
+                    {call aui.form.submit}
+                        {param id: 'delete_submit'/}
+                        {param name}
+                            {getText('common.words.delete')}
+                        {/param}
+                        {param text}
+                            {getText('common.words.delete')}
+                        {/param}
+                    {/call}
+
+                    <a href="ViewRepositories.jspa"
+                       id="cancelButton"
+                       class="aui-button aui-button-link"
+                       accesskey="{getText('common.forms.cancel.accesskey')}"
+                       title="{getText('common.forms.cancel')}">
+                       {getText('common.forms.cancel')}
+                    </a>
+                {/param}
+            {/call}
+        {/param}
+    {/call}
+
+</body>
+</html>
+{/template}

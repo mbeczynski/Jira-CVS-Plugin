@@ -1,0 +1,80 @@
+{namespace JIRA.Templates.CVS}
+
+/**
+ * Select Project Repository Page.
+ *
+ * @param repositories
+ * @param baseURL
+ * @param project
+ * @param xsrfToken
+ * @param errors
+ */
+{template .selectProjectRepository}
+<html>
+<head>
+	<title>{getText('admin.projects.cvsmodules.select.project.repository')}</title>
+    <meta name="admin.active.section" content="atl.jira.proj.config"/>
+</head>
+<body>
+
+{if ($repositories == null or length($repositories) == 0)}
+    <h3>{getText('admin.projects.cvsmodules.no.version.control')}</h3>
+    <p>
+        {getText('admin.projects.cvsmodules.no.version.control.description')}
+    </p>
+    <p>
+        <img src="{$baseURL}/images/icons/bullet_creme.gif" height="8" width="8" border="0">
+        <a id="cvs-no-modules" href="{$baseURL}/secure/admin/projectcategories/AddRepository!default.jspa">
+            {getText('admin.projects.cvsmodules.add.new.module')}
+        </a>
+    </p>
+{else}
+    <h3>{getText('admin.projects.cvsmodules.select.version.control.modules')}</h3>
+    <p>
+        {getText('admin.projects.cvsmodules.page.description')}
+    <p>
+    <p>
+        {getText('admin.projects.cvsmodules.note')}
+    </p>
+
+    {call aui.form.form}
+        {param action: 'EnterpriseSelectProjectRepository.jspa' /}
+        {param content}
+            {call aui.form.selectField}
+                {param name: 'multipleRepositoryIds' /}
+                {param isMultiple: true /}
+                {param options: $repositories /}
+                {param errorTexts: $errors.multipleRepositoryIds ? [$errors.multipleRepositoryIds] : [] /}
+            {/call}
+
+            <input type="hidden" name="projectId" id="keyEdited" value="{$project.id}">
+            <input type="hidden" name="atl_token" id="ital_toekn" value="{$xsrfToken}">
+
+            {call aui.form.buttons}
+                {param content}
+                    {call aui.form.submit}
+                        {param id: 'select_submit'/}
+                        {param name}
+                            {getText('common.words.select')}
+                        {/param}
+                        {param text}
+                            {getText('common.words.select')}
+                        {/param}
+                    {/call}
+
+                    <a href="{$baseURL}/plugins/servlet/project-config/{$project.key}/summary"
+                       id="cancelButton"
+                       class="aui-button aui-button-link"
+                       accesskey="{getText('common.forms.cancel.accesskey')}"
+                       title="{getText('common.forms.cancel')}">
+                       {getText('common.forms.cancel')}
+                    </a>
+
+                {/param}
+            {/call}
+        {/param}
+    {/call}
+{/if}
+</body>
+</html>
+{/template}

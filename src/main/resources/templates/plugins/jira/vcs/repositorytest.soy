@@ -1,0 +1,33 @@
+{namespace JIRA.Templates.CVS}
+
+/**
+ * Repository Test Page.
+ *
+ * @param message
+ * @param invalidInput
+ */
+{template .repotest}
+<html>
+<head>
+	<title>{getText('admin.cvsmodules.test.cvs.repository')}</title>
+    <meta name="admin.active.section" content="admin_plugins_menu/source_control"/>
+    <meta name="admin.active.tab" content="cvs_modules"/>
+</head>
+<body>
+    <h3>{getText('admin.cvsmodules.test.repository')}</h3>
+    <p>{getText('admin.cvsmodules.test.page.description')}</p>
+    {if ($message or $invalidInput)}
+        {call JIRA.Templates.errorMsg}
+            {param msg: $message /}
+        {/call}
+    {else}
+        {call JIRA.Templates.successMsg}
+            {param msg}
+                {getText('admin.cvsmodules.test.no.problems')}
+            {/param}
+        {/call}
+    {/if}
+    <a href="ViewRepositories.jspa" class="aui-button">{getText('admin.common.words.ok')}</a>
+</body>
+</html>
+{/template}

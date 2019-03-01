@@ -1,0 +1,117 @@
+{namespace JIRA.Templates.CVS}
+
+/**
+ * View Repositories Page.
+ *
+ * @param systemAdministrator
+ * @param repositories
+ * @param viewCVSRootParameterMappings
+ * @param viewCVSBaseUrlMappings
+ * @param repositoryProjectMappings
+ * @param repositoryDeletableMappings
+ * @param baseURL
+ * @param xsrfToken
+ */
+{template .viewRepositories}
+<html>
+<head>
+	<title>{getText('admin.cvsmodules.code.repositories')}</title>
+    <meta name="admin.active.section" content="admin_plugins_menu/source_control"/>
+    <meta name="admin.active.tab" content="cvs_modules"/>
+</head>
+<body>
+    <h3>{getText('admin.menu.globalsettings.cvs.modules')}</h3>
+    <p>{getText('admin.cvsmodules.description')}</p>
+
+    {if $systemAdministrator}
+        <a href="AddRepository!default.jspa">{getText('admin.cvsmodules.add.new.cvs.module')}</a>
+    {else}
+        {call JIRA.Templates.warningMsg}
+            {param msg}
+                {getText('admin.errors.must.be.sys.admin.to.create')}
+            {/param}
+        {/call}
+    {/if}
+
+    {if length($repositories) == 0}
+        {call JIRA.Templates.infoMsg}
+            {param msg}
+                {getText('admin.cvsmodules.no.modules.configured')}
+            {/param}
+        {/call}
+    {else}
+    <table class="aui aui-table-rowhover" id="cvs_modules_table">
+        <thead>
+            <tr>
+                <th>
+                    {getText('common.words.name')}
+                </th>
+                <th>
+                    {getText('admin.common.words.details')}
+                </th>
+                <th>
+                    {getText('common.concepts.projects')}
+                </th>
+                {if $systemAdministrator}
+                <th width="10%">
+                    {getText('common.words.operations')}
+                </th>
+                {/if}
+            </tr>
+        </thead>
+        <tbody>
+        {foreach $repository in $repositories}
+            <tr>
+                <td>
+                    <b>{$repository.name}</b>
+                    {if $repository.description}
+                        <div class="description">{$repository.description}</div>
+                    {/if}
+                </td>
+                <td>
+                    <b>{getText('admin.cvsmodules.log.file.path')}</b>:
+                    {if $repository.cvsLogFilePath}
+                         {$repository.cvsLogFilePath}
+                    {else}
+                        <span class="status-innactive">{getText('admin.cvsmodules.not.set')}</span>
+                    {/if}
+                    <br>
+                    <b>{getText('admin.cvsmodules.cvs.root')}</b>: {$repository.cvsRoot}<br>
+                    <b>{getText('admin.cvsmodules.module.name')}</b>: {$repository.moduleName}<br>
+                    <b>{getText('admin.cvsmodules.log.retrieval')}</b>: {if $repository.fetchLog}{getText('admin.cvsmodules.periodic.retrieval')}{else}{getText('admin.cvsmodules.log.needs.manual.update')}{/if}<br>
+                    <b>{getText('admin.cvsmodules.cvs.timeout')}</b>: {$repository.cvsTimeoutStringInSeconds} seconds<br>
+                    <b>{getText('admin.cvsmodules.viewcvs.url')}</b>: {$viewCVSBaseUrlMappings[$repository.id+'']}
+                    {if $viewCVSBaseUrlMappings[$repository.id+'']}
+                        <br><b>{getText('admin.cvsmodules.viewcvs.root.param')}</b>: {$viewCVSRootParameterMappings[$repository.id+'']}
+                    {/if}
+                </td>
+                <td>
+                    {if length($repositoryProjectMappings[$repository.id+'']) == 0}
+                        <ul>
+                        {foreach $project in $repositoryProjectMappings[$repository.id+'']}
+                            <li><a href="{$baseURL}/plugins/servlet/project-config/{$project.key}/summary">{$project.name}</a></li>
+                        {/foreach}
+                        </ul>
+                    {else}
+                        &nbsp;
+                    {/if}
+                </td>
+                {if $systemAdministrator}
+                <td>
+                    <ul class="operations-list">
+                        <li><a id="edit_{$repository.id}" href="UpdateRepository!default.jspa?id={$repository.id}">{getText('common.words.edit')}</a></li>
+                        <li><a id="test_{$repository.id}" href="RepositoryTest.jspa?id={$repository.id}&atl_token={$xsrfToken}">{getText('admin.common.words.test')}</a></li>
+                        {if $repositoryDeletableMappings[$repository.id+'']}
+                            <li><a id="delete_{$repository.id}" href="DeleteRepository!default.jspa?id={$repository.id}">{getText('common.words.delete')}</a></li>
+                        {/if}
+                    </ul>
+                </td>
+                {/if}
+            </tr>
+        {/foreach}
+        </tbody>
+    </table>
+    {/if}
+</body>
+</html>
+{/template}

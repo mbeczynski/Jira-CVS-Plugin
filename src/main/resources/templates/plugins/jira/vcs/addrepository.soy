@@ -1,0 +1,66 @@
+{namespace JIRA.Templates.CVS}
+
+// TODO Double escaping on form descriptions currently.
+
+/**
+ * Add Repository Page
+ *
+ * @param fetchLog
+ * @param xsrfToken
+ * @param errors
+ */
+{template .addRepository}
+<html>
+<head>
+	<title>{getText('admin.cvsmodules.add.cvs.module')}</title>
+    <meta name="admin.active.section" content="admin_plugins_menu/source_control"/>
+    <meta name="admin.active.tab" content="cvs_modules"/>
+</head>
+<body>
+    <h3>{getText('admin.cvsmodules.add.cvs.module')}</h3>
+    <p>{getText('admin.cvsmodules.add.cvs.module.page.description')}</p>
+    <p>{getText('admin.cvsmodules.add.instructions')}</p>
+
+    {call JIRA.Templates.infoMsg}
+        {param msg}
+            {getText('admin.cvsmodules.add.note')}
+        {/param}
+    {/call}
+
+    {call aui.form.form}
+        {param action: 'AddRepository.jspa' /}
+        {param content}
+            {call JIRA.Templates.CVS.cvsFields}
+                {param fetchLog: $fetchLog /}
+                {param errors: $errors /}
+            {/call}
+
+            <input type="hidden" name="atl_token" id="ital_toekn" value="{$xsrfToken}">
+
+            {call aui.form.buttons}
+                {param content}
+                    {call aui.form.submit}
+                        {param id: 'add_submit'/}
+                        {param name}
+                            {getText('common.forms.add')}
+                        {/param}
+                        {param text}
+                            {getText('common.forms.add')}
+                        {/param}
+                    {/call}
+
+                    <a href="ViewRepositories.jspa"
+                       id="cancelButton"
+                       class="aui-button aui-button-link"
+                       accesskey="{getText('common.forms.cancel.accesskey')}"
+                       title="{getText('common.forms.cancel')}">
+                       {getText('common.forms.cancel')}
+                    </a>
+
+                {/param}
+            {/call}
+        {/param}
+    {/call}
+</body>
+</html>
+{/template}

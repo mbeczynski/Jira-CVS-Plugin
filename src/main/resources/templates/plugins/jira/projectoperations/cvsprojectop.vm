@@ -1,0 +1,27 @@
+#* @vtlvariable name="i18n" type="com.atlassian.jira.util.I18nHelper" *#
+#* @vtlvariable name="repos" type="java.util.List<com.atlassian.jira.vcs.Repository>" *#
+
+<span class="project-config-list-label">${i18n.getText("admin.projects.cvs.modules")}:</span>
+    #if (${repos.empty})
+        <span class="project-config-list-value">${i18n.getText('common.words.none')}
+    #else
+        <span id="project-config-cvs-value" class="project-config-list-value">
+        #foreach($repo in $repos)
+            #if ($isAdmin)
+                <a class="project-config-cvs-repo" href="$baseurl/secure/admin/ViewRepositories.jspa">
+            #else
+                <span class="project-config-cvs-repo">
+            #end
+                $repo.name
+            #if($isAdmin)
+                </a>
+            #else
+                </span>
+            #end
+            #if ($velocityHasNext), #end
+        #end
+    #end
+    #if ($isAdmin)
+        (<a id="project-config-cvs-change" href="$baseurl/secure/project/EnterpriseSelectProjectRepository!default.jspa?projectId=${project.id}">$i18n.getText('common.words.change')</a>)
+    #end
+</span>
